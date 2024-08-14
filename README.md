@@ -27,13 +27,7 @@ Before you can use this quickstart, you need to subscribe to the DevOpser Flask 
 
 5. On the configuration page:
    - Select the AWS region closest to your users to reduce latency (e.g., North Virginia).
-   - Click on "Continue to Launch".
-
-6. On the launch options page:
-   - Select "Launch through EC2" from the "Choose Action" dropdown.
-   - Click on "Launch".
-
-7. You'll be redirected to the EC2 launch wizard. You don't need to launch an instance manually - just note down the AMI ID displayed on this page. You'll need this for the `openaiflask_ami_id` variable in your `terraform.tfvars` file.
+   - copy the AMI-id and use this in the configuration for the `openaiflask_ami_id` variable in your `terraform.tfvars` file.
 
 8. Your subscription is now active, and you can use the AMI ID in your Terraform configuration.
 

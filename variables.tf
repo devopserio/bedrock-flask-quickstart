@@ -28,3 +28,8 @@ variable "openaiflask_ami_id" {
 variable domain_name {
   description = "The domain name for the application in route53"
 }
+
+variable "subdomain" {
+  description = "The subdomain for the application in route53"
+  
+}

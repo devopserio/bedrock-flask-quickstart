@@ -1,5 +1,12 @@
+# Define the Route53 zone data source
+data "aws_route53_zone" "domain" {
+  name         = "${var.domain_name}."
+  private_zone = false
+}
+
+# Create the ACM certificate
 resource "aws_acm_certificate" "openaiflask" {
-  domain_name       = var.domain_name
+  domain_name       = "${var.subdomain}.${var.domain_name}"
   validation_method = "DNS"
 
   tags = {
@@ -11,6 +18,7 @@ resource "aws_acm_certificate" "openaiflask" {
   }
 }
 
+# Create DNS records for certificate validation
 resource "aws_route53_record" "cert_validation" {
   for_each = {
     for dvo in aws_acm_certificate.openaiflask.domain_validation_options : dvo.domain_name => {
@@ -25,24 +33,21 @@ resource "aws_route53_record" "cert_validation" {
   records         = [each.value.record]
   ttl             = 60
   type            = each.value.type
-  zone_id         = data.aws_route53_zone.devopser.zone_id
+  zone_id         = data.aws_route53_zone.domain.zone_id
 }
 
+# Validate the certificate
 resource "aws_acm_certificate_validation" "openaiflask" {
   certificate_arn         = aws_acm_certificate.openaiflask.arn
   validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
 }
 
-data "aws_route53_zone" "domain" {
-  name         = "${var.domain_name}."
-  private_zone = false  # Ensure this is set to false for a public zone
-}
-
+# Create the A record for the subdomain pointing to the ALB
 resource "aws_route53_record" "openaiflask" {
-  depends_on = [ aws_lb.openaiflask ]
-  zone_id = data.aws_route53_zone.domain.zone_id
-  name    = var.domain_name
-  type    = "A"
+  depends_on = [aws_lb.openaiflask]
+  zone_id    = data.aws_route53_zone.domain.zone_id
+  name       = "${var.subdomain}.${var.domain_name}"
+  type       = "A"
 
   alias {
     name                   = aws_lb.openaiflask.dns_name
