@@ -33,8 +33,14 @@ resource "aws_acm_certificate_validation" "openaiflask" {
   validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
 }
 
+data "aws_route53_zone" "domain" {
+  name         = "${var.domain_name}."
+  private_zone = false  # Ensure this is set to false for a public zone
+}
+
 resource "aws_route53_record" "openaiflask" {
-  zone_id = data.aws_route53_zone.devopser.zone_id
+  depends_on = [ aws_lb.openaiflask ]
+  zone_id = data.aws_route53_zone.domain.zone_id
   name    = var.domain_name
   type    = "A"
 
