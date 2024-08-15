@@ -1,6 +1,6 @@
 # OpenAI Flask Application Quickstart
 
-This quickstart guide helps you deploy an OpenAI-powered Flask application on AWS using Terraform. The setup includes two EC2 instances, an Application Load Balancer (ALB) with SSL termination, and necessary networking components.
+This quickstart guide helps you deploy an OpenAI-integrated Flask application on AWS using Terraform. The setup includes two EC2 instances, an Application Load Balancer (ALB) with SSL termination, and necessary networking components.
 
 ## Prerequisites
 
@@ -88,7 +88,7 @@ If these commands work without errors, your AWS configuration should be ready fo
 
 Before you can use this quickstart, you need to subscribe to the DevOpser Flask AMI from the AWS Marketplace. Follow these steps:
 
-1. Visit the [DevOpser Flask AMI page on AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-cs4ytbfwjpkzm) (replace with the actual URL).
+1. Visit the [DevOpser Flask AMI page on AWS Marketplace](https://aws.amazon.com/marketplace/pp/prodview-tti62q7ulbcoq)
 
 2. Click on the "Continue to Subscribe" button.
 
@@ -98,7 +98,7 @@ Before you can use this quickstart, you need to subscribe to the DevOpser Flask 
 
 5. On the configuration page:
    - Select the AWS region closest to your users to reduce latency (e.g., North Virginia).
-   - copy the AMI-id and use this in the configuration for the `openaiflask_ami_id` variable in your `terraform.tfvars` file.
+   - copy the AMI-id and use this in the configuration for the `openaiflask_ami_id` variable in your `terraform.tfvars` file or upload as a variable in Terraform Cloud.
 
 6. Your subscription is now active, and you can use the AMI ID in your Terraform configuration.
 
