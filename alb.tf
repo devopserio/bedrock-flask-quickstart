@@ -14,6 +14,7 @@ resource "aws_lb" "openaiflask" {
   }
 }
 
+
 resource "aws_lb_target_group" "openaiflask" {
   name     = "openaiflask-tg-${random_string.rando.result}"
   port     = 8000
@@ -30,10 +31,17 @@ resource "aws_lb_target_group" "openaiflask" {
     matcher             = "200"
   }
 
+  stickiness {
+    type            = "lb_cookie"
+    cookie_duration = 86400  # 1 day in seconds
+    enabled         = true
+  }
+
   tags = {
     Name = "openaiflask-tg"
   }
 }
+
 
 resource "aws_lb_target_group_attachment" "openaiflask" {
   for_each = {
