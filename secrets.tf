@@ -30,12 +30,6 @@ resource "aws_secretsmanager_secret_version" "openai_api_key" {
   secret_string = var.openai_api_key
 }
 
-resource "aws_secretsmanager_secret" "gh_actions_token" {
-  name        = "GH_Actions_Token-${random_string.example_secret.result}"
-  description = "GitHub Actions token"
-  # If you want to use a custom KMS key
- # kms_key_id = aws_kms_key.openaiflaskquickstart_kms_key.id
-}
 
 
 

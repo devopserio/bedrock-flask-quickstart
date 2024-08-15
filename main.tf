@@ -1,6 +1,6 @@
 // Please update the REGION value in the user-data script based on your region. Default is us-east-1.
 
-resource "aws_instance" "test_instance" {
+resource "aws_instance" "openaiflask" {
   depends_on = [ aws_vpc.vpc, aws_subnet.public_subnet, aws_security_group.openaiflask, aws_iam_instance_profile.openaiflask ]
   count                  = 2
   ami                    = var.openaiflask_ami_id
