@@ -35,6 +35,17 @@ resource "aws_lb_target_group" "openaiflask" {
   }
 }
 
+resource "aws_lb_target_group_attachment" "openaiflask" {
+  for_each = {
+    for idx, instance in aws_instance.openaiflask : 
+    idx => instance
+  }
+  target_group_arn = aws_lb_target_group.openaiflask.arn
+  target_id        = each.value.id
+  port             = 8000
+}
+
+
 resource "aws_lb_listener" "openaiflask" {
   load_balancer_arn = aws_lb.openaiflask.arn
   port              = "443"

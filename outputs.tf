@@ -45,5 +45,5 @@ output "acm_certificate_arn" {
 
 output "route53_zone_id" {
   description = "The Zone ID of the Route 53 hosted zone"
-  value       = data.aws_route53_zone.devopser.zone_id
+  value       = data.aws_route53_zone.domain.zone_id
 }

@@ -1,4 +1,4 @@
-resource random_string "rando" {
+resource "random_string" "rando" {
   length  = 4
   special = false
 }
@@ -14,15 +14,26 @@ resource "aws_vpc" "vpc" {
   }
 }
 
-# Public Subnet
-resource "aws_subnet" "public_subnet" {
+# Public Subnets
+resource "aws_subnet" "public_subnet_1" {
   vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = var.public_subnet_cidr
+  cidr_block              = var.public_subnet_cidr_1
   availability_zone       = data.aws_availability_zones.available.names[0]
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "ai-application-public-subnet"
+    Name = "ai-application-public-subnet-1"
+  }
+}
+
+resource "aws_subnet" "public_subnet_2" {
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = var.public_subnet_cidr_2
+  availability_zone       = data.aws_availability_zones.available.names[1]
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "ai-application-public-subnet-2"
   }
 }
 
@@ -49,23 +60,28 @@ resource "aws_route_table" "public_rt" {
   }
 }
 
-# Route Table Association
-resource "aws_route_table_association" "public_rt_association" {
-  subnet_id      = aws_subnet.public_subnet.id
+# Route Table Associations
+resource "aws_route_table_association" "public_rt_association_1" {
+  subnet_id      = aws_subnet.public_subnet_1.id
   route_table_id = aws_route_table.public_rt.id
 }
 
-# Security Group for EC2 Instance
+resource "aws_route_table_association" "public_rt_association_2" {
+  subnet_id      = aws_subnet.public_subnet_2.id
+  route_table_id = aws_route_table.public_rt.id
+}
+
+# Security Group for EC2 Instances
 resource "aws_security_group" "openaiflask" {
   name        = "ai-application-sg-${random_string.rando.result}"
-  description = "Security group for AI application EC2 instance"
+  description = "Security group for AI application EC2 instances"
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["${var.your_ip_address}/32"]  # Consider restricting this to your IP for better security
+    cidr_blocks = ["${var.your_ip_address}/32"]
   }
 
   ingress {
@@ -86,5 +102,3 @@ resource "aws_security_group" "openaiflask" {
     Name = "ai-application-sg"
   }
 }
-
-# Variables (you'll need to define these in your variables.tf file)

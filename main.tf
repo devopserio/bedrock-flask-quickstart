@@ -2,12 +2,13 @@
 
 resource "aws_instance" "test_instance" {
   depends_on = [ aws_vpc.vpc, aws_subnet.public_subnet, aws_security_group.openaiflask, aws_iam_instance_profile.openaiflask ]
+  count                  = 2
   ami                    = var.openaiflask_ami_id
   instance_type          = "t3.large"
   iam_instance_profile   = aws_iam_instance_profile.openaiflask.name
-  vpc_security_group_ids = [aws_security_group.openaiflask.id, data.terraform_remote_state.tf_agent.outputs.access_server_security_group_id]
+  vpc_security_group_ids = [aws_security_group.openaiflask.id, aws_security_group.alb.id]
   key_name               = var.key_name
-  subnet_id              = aws_subnet.public_subnet.id
+  subnet_id              = count.index == 0 ? aws_subnet.public_subnet_1.id : aws_subnet.public_subnet_2.id
     
   root_block_device {
     volume_type           = "gp2"
@@ -72,7 +73,7 @@ resource "aws_instance" "test_instance" {
     echo 'Installing dependencies and launching the application...'
     pip install -r /home/ec2-user/openaiflask/app/requirements.txt
     
-    nohup env REGION=us-east-1 FLASK_APP=run FLASK_ENV=development OPENAI_SECRET_NAME=OpenAI-API-Key-for-AMI FLASK_SECRET_NAME=Flask-secret-key-for-ami REDIS_URL=redis://localhost:6379/0 gunicorn --bind 0.0.0.0:8000 run:app &
+    nohup env REGION=us-east-1 FLASK_APP=run FLASK_ENV=development OPENAI_SECRET_NAME=OpenAI-API-Key-for-AMI-quickstart FLASK_SECRET_NAME=Flask-secret-key-for-ami-quickstart REDIS_URL=redis://localhost:6379/0 gunicorn --bind 0.0.0.0:8000 run:app &
     
     sleep 100
     
@@ -89,7 +90,7 @@ resource "aws_instance" "test_instance" {
   )
 
   tags = {
-    Name = "openaiflask-quickstart"
+    Name = "openaiflask-quickstart-${count.index}"
   }
 }
 
