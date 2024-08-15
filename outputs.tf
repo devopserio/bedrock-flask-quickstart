@@ -10,12 +10,12 @@ output "alb_dns_name" {
 
 output "ec2_instance_id" {
   description = "The ID of the EC2 instance"
-  value       = aws_instance.openaiflask.id
+  value       = aws_instance.openaiflask[count.index].id
 }
 
 output "ec2_private_ip" {
   description = "The private IP address of the EC2 instance"
-  value       = aws_instance.openaiflask.private_ip
+  value       = aws_instance.openaiflask[count.index].private_ip
 }
 
 output "vpc_id" {
