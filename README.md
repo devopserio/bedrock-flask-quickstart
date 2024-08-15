@@ -1,6 +1,6 @@
 # OpenAI Flask Application Quickstart
 
-This quickstart guide helps you deploy an OpenAI-powered Flask application on AWS using Terraform. The setup includes an EC2 instance, an Application Load Balancer (ALB) with SSL termination, and necessary networking components.
+This quickstart guide helps you deploy an OpenAI-powered Flask application on AWS using Terraform. The setup includes two EC2 instances, an Application Load Balancer (ALB) with SSL termination, and necessary networking components.
 
 ## Prerequisites
 
@@ -115,9 +115,13 @@ Create a `terraform.tfvars` file in the project directory to set the required va
 aws_region         = "us-east-1"  # The AWS region to deploy resources
 openaiflask_ami_id = "ami-xxxxxxxxxxxxxxxxx"  # AMI ID from the subscription process
 key_name           = "your-key-pair-name"  # Your EC2 key pair name
-private_key_path   = "/path/to/your/private-key.pem"  # Path to your private key file
 your_ip_address    = "x.x.x.x"  # Your IP address for SSH access
 domain_name        = "yourdomain.com"  # Your registered domain in Route 53
+subdomain          = "openaiflask"  # The subdomain for your application
+public_subnet_cidr_1 = "10.0.1.0/24"  # CIDR for the first public subnet
+public_subnet_cidr_2 = "10.0.2.0/24"  # CIDR for the second public subnet
+openai_api_key     = "your-openai-api-key"  # Your OpenAI API key
+flask_secret_key   = "your-flask-secret-key"  # A secret key for Flask
 ```
 
 ### Variable Values
@@ -125,11 +129,37 @@ domain_name        = "yourdomain.com"  # Your registered domain in Route 53
 - `aws_region`: Choose the AWS region where you want to deploy the resources. This should match the region you selected during the AMI subscription process.
 - `openaiflask_ami_id`: Use the AMI ID you noted down during the subscription process.
 - `key_name`: Create an EC2 key pair in your AWS account and provide its name.
-- `private_key_path`: The local path to the private key file of your EC2 key pair.
 - `your_ip_address`: Your current public IP address. You can find this by searching "what is my ip" on Google.
 - `domain_name`: The domain you've registered in Amazon Route 53.
+- `subdomain`: The subdomain you want to use for your application.
+- `public_subnet_cidr_1` and `public_subnet_cidr_2`: CIDR blocks for the two public subnets.
+- `openai_api_key`: Your OpenAI API key.
+- `flask_secret_key`: A secret key for Flask. Generate a strong, random string for this.
 
-## Deployment Steps
+**Note on Variable Handling and Terraform Cloud**: While using a `terraform.tfvars` file is convenient for local development, it's not the most secure method for handling sensitive variables in a production environment. For enhanced security and better secret management, we strongly recommend using Terraform Cloud. Here's how to set it up:
+
+1. Fork this repository to your own GitHub account.
+
+2. Sign up for a Terraform Cloud account at [https://app.terraform.io/signup/account](https://app.terraform.io/signup/account) if you haven't already.
+
+3. In Terraform Cloud, create a new workspace and choose "Version control workflow" to connect it to your forked GitHub repository.
+
+4. In your workspace settings, navigate to the "Variables" section. Here, you can add all the variables from the `terraform.tfvars` file as Terraform variables. For sensitive variables like `openai_api_key` and `flask_secret_key`, make sure to mark them as sensitive.
+
+5. To authenticate with AWS, you can use [dynamic provider credentials](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/dynamic-provider-credentials/aws-configuration). 
+
+6. With this setup, you can now run your Terraform operations directly from Terraform Cloud. It will use the variables you've set and the AWS credentials you've provided.
+
+Using Terraform Cloud provides several benefits:
+- Secure storage of sensitive variables and state files
+- Collaboration features for team environments
+- Consistent execution environment
+- Integration with version control systems
+- Automated runs based on repository changes
+
+You can learn more about Terraform Cloud [here](https://www.terraform.io/cloud).
+
+## Deployment Steps from local
 
 1. Initialize Terraform:
    ```
@@ -157,10 +187,10 @@ domain_name        = "yourdomain.com"  # Your registered domain in Route 53
 After successful deployment, you can access your application at:
 
 ```
-https://openaiflask.yourdomain.com
+https://<subdomain>.<domain_name>
 ```
 
-Replace `yourdomain.com` with your actual domain name.
+Subdomain and domain_name are variables - please note the domain should be hosted on AWS Route53.
 
 ## Terraform Outputs
 
@@ -168,12 +198,12 @@ After a successful deployment, Terraform will display several outputs that provi
 
 - `application_url`: The HTTPS URL where you can access your application.
 - `alb_dns_name`: The DNS name of the Application Load Balancer.
-- `ec2_instance_id`: The ID of the EC2 instance running your application.
-- `ec2_private_ip`: The private IP address of the EC2 instance.
+- `ec2_instance_ids`: The IDs of the EC2 instances running your application.
+- `ec2_private_ips`: The private IP addresses of the EC2 instances.
 - `vpc_id`: The ID of the VPC where resources are deployed.
 - `public_subnet_ids`: The IDs of the public subnets used by the ALB.
 - `alb_security_group_id`: The ID of the ALB's security group.
-- `ec2_security_group_id`: The ID of the EC2 instance's security group.
+- `ec2_security_group_id`: The ID of the EC2 instances' security group.
 - `acm_certificate_arn`: The ARN of the ACM certificate used for HTTPS.
 - `route53_zone_id`: The Zone ID of your Route 53 hosted zone.
 
@@ -191,19 +221,23 @@ Confirm the destruction by typing `yes` when prompted.
 
 ## Important Notes
 
-1. **Costs**: This quickstart creates AWS resources that may incur costs. Be sure to review the AWS pricing for EC2 instances, Application Load Balancers, and associated services.
+1. **Costs**: This quickstart creates AWS resources that may incur costs. Based on current estimates, the resources in this configuration cost approximately $142/month to operate. Always review the AWS pricing for EC2 instances, Application Load Balancers, and associated services before deploying.
 
 2. **Security**: While this quickstart provides a basic secure setup, it's recommended to implement additional security measures for production use.
 
-3. **EC2 in Public Subnet**: This quickstart deploys the EC2 instance in a public subnet for simplicity. For enhanced security in a production environment, consider deploying the EC2 instance in a private subnet accessed via an OpenVPN Access Server. DevOpser can assist with implementing this more secure architecture if needed.
+3. **EC2 in Public Subnet**: This quickstart deploys the EC2 instances in public subnets for simplicity. For enhanced security in a production environment, consider deploying the EC2 instances in private subnets accessed via a bastion host, OpenVPN Access Server, or similar solution. This more secure architecture is outside the scope of this quickstart, but DevOpser can assist with implementing such a setup if needed. Please reach out to us for more information.
 
 4. **SSL Certificate**: The quickstart uses AWS Certificate Manager for SSL. Ensure your domain is properly set up in Route 53 for successful certificate validation.
 
 5. **Dependencies**: Make sure all dependencies (Terraform, AWS CLI) are correctly installed and configured before starting.
 
+6. **Sticky Sessions**: This configuration implements sticky sessions on the Application Load Balancer. This ensures that a client is consistently routed to the same target in a group for the duration of a session, which enables a smooth AI chat experience for your users.
+
+7. **Future Cost Optimization**: DevOpser is currently developing the DevOpser Platform for AI Webhosting, which aims to productionalize your application at a fraction of the cost with a single click. This platform is on track for release in Q4 2024. Stay tuned for updates!
+
 ## Support
 
-For any questions or assistance with this quickstart, please contact DevOpser at info@devopser.io. We're here to help you implement more advanced configurations or address any issues you may encounter.
+For any questions or assistance with this quickstart, please contact DevOpser at info@devopser.io. We're here to help you implement more advanced configurations, address any issues you may encounter, or discuss how we can help optimize your deployment for enhanced security and cost-effectiveness. It is also open source so feel free to submit a pull request with any changes and we will review them.
 
 ## Disclaimer
 
