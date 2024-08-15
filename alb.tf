@@ -1,6 +1,6 @@
 # ALB Configuration
 resource "aws_lb" "openaiflask" {
-  depends_on = [ aws_acm_certificate.openaiflask, aws_security_group.alb, aws_lb_target_group.openaiflask, aws_lb_listener.openaiflask, aws_lb_listener.redirect_http_to_https , aws_subnet.public_subnet, aws_acm_certificate_validation.openaiflask ]
+  depends_on = [ aws_acm_certificate.openaiflask, aws_security_group.alb ]
   name               = "openaiflask-alb-${random_string.rando.result}"
   internal           = false
   load_balancer_type = "application"
