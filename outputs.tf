@@ -10,12 +10,12 @@ output "alb_dns_name" {
 
 output "ec2_instance_id" {
   description = "The ID of the EC2 instance"
-  value       = aws_instance.test_instance.id
+  value       = aws_instance.openaiflask.id
 }
 
 output "ec2_private_ip" {
   description = "The private IP address of the EC2 instance"
-  value       = aws_instance.test_instance.private_ip
+  value       = aws_instance.openaiflask.private_ip
 }
 
 output "vpc_id" {
@@ -25,7 +25,7 @@ output "vpc_id" {
 
 output "public_subnet_ids" {
   description = "The IDs of the public subnets"
-  value       = [aws_subnet.public_subnet.id, aws_subnet.public_subnet_2.id]
+  value       = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
 }
 
 output "alb_security_group_id" {

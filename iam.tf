@@ -27,7 +27,7 @@ resource "aws_iam_role" "openaiflask" {
 #IAM Role for OpenAI secrets
 
 resource "aws_iam_policy" "openaiflaskquickstart_secrets_policy" {
-  name        = "openaiflask-quickstart-secrets-manager-policy-${random_string.example_secret.result}"
+  name        = "openaiflask-quickstart-secrets-manager-policy-${random_string.rando.result}"
   description = "Policy to access secrets in Secrets Manager from EKS for flask AI demo and django portal"
 
   policy = jsonencode({
@@ -53,7 +53,7 @@ resource "aws_iam_policy" "openaiflaskquickstart_secrets_policy" {
 
 # uncomment if using KMS key
 #resource "aws_iam_policy" "kms_access_policy" {
-#  name   = "devopseraidemo-kms-access-policy-${random_string.example_secret.result}"
+#  name   = "devopseraidemo-kms-access-policy-${random_string.rando.result}"
 #  policy = jsonencode({
 #    Version = "2012-10-17",
 #    Statement = [
