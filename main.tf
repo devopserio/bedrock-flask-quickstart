@@ -94,8 +94,3 @@ resource "aws_instance" "test_instance" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "openaiflask" {
-  target_group_arn = aws_lb_target_group.openaiflask.arn
-  target_id        = aws_instance.test_instance.id
-  port             = 8000
-}
