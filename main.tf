@@ -73,7 +73,7 @@ resource "aws_instance" "openaiflask" {
     echo 'Installing dependencies and launching the application...'
     pip install -r /home/ec2-user/openaiflask/app/requirements.txt
     
-    nohup env REGION=us-east-1 FLASK_APP=run FLASK_ENV=development OPENAI_SECRET_NAME=OpenAI-API-Key-for-AMI-quickstart FLASK_SECRET_NAME=Flask-secret-key-for-ami-quickstart REDIS_URL=redis://localhost:6379/0 gunicorn --bind 0.0.0.0:8000 run:app &
+    nohup env REGION=us-east-1 FLASK_APP=run FLASK_ENV=development OPENAI_SECRET_NAME=OpenAI-API-Key-for-AMI-quickstart FLASK_SECRET_NAME=Flask-secret-key-for-ami-quickstart REDIS_URL=redis://localhost:6379/0 gunicorn --bind 0.0.0.0:8000 --workers 4 --threads 5 run:app &
     
     sleep 100
     
