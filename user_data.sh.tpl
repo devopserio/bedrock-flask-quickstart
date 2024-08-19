@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
-LOG_FILE='/home/ec2-user/test_ami_il_central_1.log'
-ERROR_FILE='/home/ec2-user/test_ami_error_il_central_1.log'
+LOG_FILE='/home/ec2-user/quickstart.log'
+ERROR_FILE='/home/ec2-user/quickstart_error.log'
 COMPLETION_LOG='/home/ec2-user/script_completion.log'
 
 exec > >(tee -a $LOG_FILE) 2> >(tee -a $ERROR_FILE >&2)
