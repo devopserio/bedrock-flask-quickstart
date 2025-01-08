@@ -13,29 +13,38 @@ resource "aws_db_subnet_group" "my_subnet_group" {
 ##################################################################################
 
 resource "aws_security_group" "db_security_group" {
-  name        = "DevOpser DB Security Group"
+  name_prefix  = "bedrockflask-db-sg-${random_string.rando.result}"
   description = "Scope for ingress to PostgreSQL database"
   vpc_id      = data.aws_vpc.selected.id
 
-  # Allow incoming connections from the dev instance on PostgreSQL port
-  ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    security_groups = [aws_security_group.bedrockflask.id] # Allowing the dev instance's security group
-  }
-
-  # Allow all outgoing traffic
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+  lifecycle {
+    create_before_destroy = true
   }
 
   tags = {
-    Name = "DevOpser DB Security Group"
+    Name = "bedrockflask-db-sg"
   }
+}
+
+# Define ingress rule separately
+resource "aws_security_group_rule" "db_postgres" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.bedrockflask.id
+  security_group_id        = aws_security_group.db_security_group.id
+  description              = "PostgreSQL access from EC2 instances"
+}
+
+resource "aws_security_group_rule" "db_egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.db_security_group.id
+  description       = "Allow all outbound traffic"
 }
 
 ##################################################################################
