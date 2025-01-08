@@ -19,7 +19,7 @@ resource "aws_lb_target_group" "bedrockflask" {
   name     = "bedrockflask-tg-${random_string.rando.result}"
   port     = 8000
   protocol = "HTTP"
-  vpc_id   = aws_vpc.vpc.id
+  vpc_id   = data.aws_vpc.selected.id
 
   health_check {
     enabled             = true
@@ -88,7 +88,7 @@ resource "aws_lb_listener" "redirect_http_to_https" {
 resource "aws_security_group" "alb" {
   name        = "bedrockflask-alb-sg-${random_string.rando.result}"
   description = "Security group for ALB"
-  vpc_id      = aws_vpc.vpc.id
+  vpc_id      = data.aws_vpc.selected.id
 
   ingress {
     from_port   = 80
