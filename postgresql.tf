@@ -1,5 +1,5 @@
 resource "aws_db_subnet_group" "my_subnet_group" {
-  name       = "dev-database-subnet-group-${random_string.example_secret.result}"
+  name       = "dev-database-subnet-group-${random_string.secret_suffix.result}"
   subnet_ids = data.aws_subnets.private.ids
 
   tags = {

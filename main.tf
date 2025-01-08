@@ -11,14 +11,14 @@ locals {
 }
 
 resource "aws_instance" "bedrockflask" {
-  depends_on = [aws_vpc.vpc, aws_subnet.public_subnet_1, aws_subnet.public_subnet_2, aws_security_group.bedrockflask, aws_iam_instance_profile.bedrockflask]
+  depends_on = [aws_security_group.bedrockflask, aws_iam_instance_profile.bedrockflask]
   count                  = 2
   ami                    = var.bedrockflask_ami_id
   instance_type          = "t3.large"
   iam_instance_profile   = aws_iam_instance_profile.bedrockflask.name
   vpc_security_group_ids = [aws_security_group.bedrockflask.id, aws_security_group.alb.id]
   key_name               = var.key_name
-  subnet_id              = count.index == 0 ? aws_subnet.public_subnet_1.id : aws_subnet.public_subnet_2.id
+  subnet_id              = data.aws_subnets.public.ids[count.index % length(data.aws_subnets.public.ids)]
     
   root_block_device {
     volume_type           = "gp2"
