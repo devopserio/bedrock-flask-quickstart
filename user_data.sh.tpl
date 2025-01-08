@@ -30,39 +30,4 @@ else
     exit 1
 fi
 
-echo 'Checking if /home/ec2-user/openaiflask directory exists...'
-if [ -d '/home/ec2-user/openaiflask' ]; then
-    echo 'Directory /home/ec2-user/openaiflask exists.'
-else
-    echo 'Directory /home/ec2-user/openaiflask does not exist.'
-    exit 1
-fi
-
-echo 'Checking if /home/ec2-user/py3.11-venv directory exists...'
-if [ -d '/home/ec2-user/py3.11-venv' ]; then
-    echo 'Directory /home/ec2-user/py3.11-venv exists.'
-else
-    echo 'Directory /home/ec2-user/py3.11-venv does not exist.'
-    exit 1
-fi
-
-echo 'Activating the virtual environment...'
-cd /home/ec2-user/openaiflask
-source /home/ec2-user/py3.11-venv/bin/activate
-
-echo 'Installing dependencies and launching the application...'
-pip install -r /home/ec2-user/openaiflask/app/requirements.txt
-
-nohup env REGION=${region} FLASK_APP=run FLASK_ENV=development OPENAI_SECRET_NAME=${openai_secret_name} FLASK_SECRET_NAME=${flask_secret_name} REDIS_URL=redis://localhost:6379/0 gunicorn --bind 0.0.0.0:8000 --workers 4 --threads 5 run:app &
-
-sleep 100
-
-echo 'Testing Flask application endpoint...'
-if curl -s http://127.0.0.1:8000 | grep -q '<title>OpenAI Chat</title>'; then
-    echo 'Flask application is running successfully.'
-else
-    echo 'Flask application did not respond correctly.'
-    exit 1
-fi
-
 echo 'Main script execution completed successfully.'
