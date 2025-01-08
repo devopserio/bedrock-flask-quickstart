@@ -47,7 +47,7 @@ resource "aws_db_instance" "bedrockflask_db" {
   db_subnet_group_name = aws_db_subnet_group.my_subnet_group.name
   storage_type         = "gp2"  # General Purpose SSD
   engine               = "postgres"
-  db_name              = var.prod_db_name
+  db_name              = var.dev_db_name
   engine_version       = "14.12" # Specify your desired version
   instance_class       = "db.t3.micro" # Choose according to your needs
   username             = var.POSTGRES_USER

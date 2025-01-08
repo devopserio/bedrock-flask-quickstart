@@ -44,25 +44,15 @@ variable "public_subnet_tag_value" {
 
 variable "private_subnet_tag_key" {
   description = "The key for the private subnet tag"
-  default     = "Tier"
+  default     = "OS"
 }
 
 variable "private_subnet_tag_value" {
   description = "The value for the private subnet tag"
-  default     = "Private"
+  default     = "Ubuntu"
 }
 
-variable "site_name" {
-  description = "The name of the site/application"
-  type        = string
-}
-
-variable "org_code" {
-  description = "Organization code used in resource naming"
-  type        = string
-}
-
-variable "prod_db_name" {
+variable "dev_db_name" {
   description = "Name of the production database"
   type        = string
   sensitive   = true
@@ -104,7 +94,7 @@ variable "admin_users" {
   description = "List of admin users for the application"
   type        = string
   sensitive   = true
-  default     = "[]"  # Default empty JSON array
+  default     = "{}"  # Default empty JSON array
 }
 
 variable "email_for_mail_server" {
@@ -116,6 +106,7 @@ variable "email_for_mail_server" {
 variable "mail_server" {
   description = "Hostname of the mail server"
   type        = string
+  default     = "smtp.gmail.com"
   sensitive   = true
 }
 
