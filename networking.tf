@@ -15,7 +15,7 @@ resource "aws_vpc" "vpc" {
 }
 
 # Security Group for EC2 Instances
-resource "aws_security_group" "openaiflask" {
+resource "aws_security_group" "bedrockflask" {
   name        = "ai-application-sg-${random_string.rando.result}"
   description = "Security group for AI application EC2 instances"
   vpc_id      = aws_vpc.vpc.id

@@ -1,6 +1,6 @@
-# OpenAI Flask Application Quickstart
+# bedrock Flask Application Quickstart
 
-This quickstart guide helps you deploy an OpenAI-integrated Flask application on AWS using Terraform. The setup includes two EC2 instances, an Application Load Balancer (ALB) with SSL termination, and necessary networking components.
+This quickstart guide helps you deploy an bedrock-integrated Flask application on AWS using Terraform. The setup includes two EC2 instances, an Application Load Balancer (ALB) with SSL termination, and necessary networking components.
 
 ## Prerequisites
 
@@ -61,7 +61,7 @@ To use this policy:
 1. Go to the AWS IAM console.
 2. Create a new policy by navigating to "Policies" and clicking "Create policy".
 3. In the JSON tab, paste the above policy.
-4. Review and create the policy, giving it a name like "OpenAIFlaskQuickstartPolicy".
+4. Review and create the policy, giving it a name like "bedrockFlaskQuickstartPolicy".
 5. Attach this policy to the IAM user or role you're using for this quickstart.
 
 **Note**: This is a broad policy for demonstration purposes. In a production environment, you should follow the principle of least privilege and grant only the specific permissions needed for your use case.
@@ -98,7 +98,7 @@ Before you can use this quickstart, you need to subscribe to the DevOpser Flask 
 
 5. On the configuration page:
    - Select the AWS region closest to your users to reduce latency (e.g., North Virginia).
-   - copy the AMI-id and use this in the configuration for the `openaiflask_ami_id` variable in your `terraform.tfvars` file or upload as a variable in Terraform Cloud.
+   - copy the AMI-id and use this in the configuration for the `bedrockflask_ami_id` variable in your `terraform.tfvars` file or upload as a variable in Terraform Cloud.
 
 6. Your subscription is now active, and you can use the AMI ID in your Terraform configuration.
 
@@ -112,52 +112,95 @@ Before you can use this quickstart, you need to subscribe to the DevOpser Flask 
 Create a `terraform.tfvars` file in the project directory to set the required variables. Here's a template with explanations:
 
 ```hcl
+# Required Core Variables
 aws_region         = "us-east-1"  # The AWS region to deploy resources
-openaiflask_ami_id = "ami-xxxxxxxxxxxxxxxxx"  # AMI ID from the subscription process
+bedrockflask_ami_id = "ami-xxxxxxxxxxxxxxxxx"  # AMI ID from the subscription process
 key_name           = "your-key-pair-name"  # Your EC2 key pair name
 your_ip_address    = "x.x.x.x"  # Your IP address for SSH access
 domain_name        = "yourdomain.com"  # Your registered domain in Route 53
-subdomain          = "openaiflask"  # The subdomain for your application
+subdomain          = "bedrockflask"  # The subdomain for your application
+site_name          = "your-site-name"  # Name of your site/application
+org_code           = "your-org-code"   # Your organization code
+
+# Database Configuration
+prod_db_name      = "your_database_name"  # Name of the production database
+POSTGRES_USER     = "your_db_username"    # PostgreSQL database username
+POSTGRES_PASSWORD = "your_db_password"    # PostgreSQL database password
+POSTGRES_PORT     = "5432"               # PostgreSQL port (default: 5432)
+
+# Mail Server Configuration
+mail_password         = "your_mail_password"  # Password for the mail server
+email_for_mail_server = "sender@example.com"  # Default sender email address
+mail_server          = "smtp.example.com"    # Mail server hostname
+mail_port            = "587"                 # Mail server port (default: 587)
+mail_use_tls         = "true"               # Whether to use TLS (default: true)
+
+# Application Configuration
+flask_secret_key   = "your-flask-secret-key"  # A secret key for Flask
+additional_secrets = "{}"  # Additional secrets in JSON format
+admin_users        = "[]"  # List of admin users in JSON format
+
+# Network Configuration
 public_subnet_cidr_1 = "10.0.1.0/24"  # CIDR for the first public subnet
 public_subnet_cidr_2 = "10.0.2.0/24"  # CIDR for the second public subnet
-openai_api_key     = "your-openai-api-key"  # Your OpenAI API key
-flask_secret_key   = "your-flask-secret-key"  # A secret key for Flask
 ```
 
 ### Variable Values
 
-- `aws_region`: Choose the AWS region where you want to deploy the resources. This should match the region you selected during the AMI subscription process.
-- `openaiflask_ami_id`: Use the AMI ID you noted down during the subscription process.
-- `key_name`: Create an EC2 key pair in your AWS account and provide its name.
-- `your_ip_address`: Your current public IP address. You can find this by searching "what is my ip" on Google.
-- `domain_name`: The domain you've registered in Amazon Route 53.
-- `subdomain`: The subdomain you want to use for your application.
-- `public_subnet_cidr_1` and `public_subnet_cidr_2`: CIDR blocks for the two public subnets.
-- `openai_api_key`: Your OpenAI API key.
-- `flask_secret_key`: A secret key for Flask. Generate a strong, random string for this.
+#### Core Configuration
+- `aws_region`: Choose the AWS region where you want to deploy the resources
+- `bedrockflask_ami_id`: Use the AMI ID from the subscription process
+- `key_name`: Create an EC2 key pair in your AWS account and provide its name
+- `your_ip_address`: Your current public IP address
+- `domain_name`: The domain you've registered in Amazon Route 53
+- `subdomain`: The subdomain for your application
+- `site_name`: A unique name for your site/application
+- `org_code`: Your organization's code for resource naming
 
-**Note on Variable Handling and Terraform Cloud**: While using a `terraform.tfvars` file is convenient for local development, it's not the most secure method for handling sensitive variables in a production environment. For enhanced security and better secret management, we strongly recommend using Terraform Cloud. Here's how to set it up:
+#### Database Configuration
+- `prod_db_name`: Name of your PostgreSQL database
+- `POSTGRES_USER`: Username for database access
+- `POSTGRES_PASSWORD`: Strong password for database access
+- `POSTGRES_PORT`: Database port (default: 5432)
 
-1. Fork this repository to your own GitHub account.
+#### Mail Server Configuration
+- `mail_password`: Password for your mail server
+- `email_for_mail_server`: Default sender email address
+- `mail_server`: SMTP server hostname
+- `mail_port`: SMTP server port (default: 587)
+- `mail_use_tls`: Enable/disable TLS for mail (default: true)
 
-2. Sign up for a Terraform Cloud account at [https://app.terraform.io/signup/account](https://app.terraform.io/signup/account) if you haven't already.
+#### Application Configuration
+- `flask_secret_key`: A secret key for Flask session management
+- `additional_secrets`: JSON object for any additional secrets
+- `admin_users`: JSON array of admin user configurations
 
-3. In Terraform Cloud, create a new workspace and choose "Version control workflow" to connect it to your forked GitHub repository.
+#### Network Configuration
+- `public_subnet_cidr_1` and `public_subnet_cidr_2`: CIDR blocks for the public subnets
 
-4. In your workspace settings, navigate to the "Variables" section. Here, you can add all the variables from the `terraform.tfvars` file as Terraform variables. For sensitive variables like `openai_api_key` and `flask_secret_key`, make sure to mark them as sensitive.
+### Secrets Management
 
-5. To authenticate with AWS, you can use [dynamic provider credentials](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/dynamic-provider-credentials/aws-configuration). 
+This quickstart uses AWS Secrets Manager to securely store sensitive information. The following secrets are managed:
 
-6. With this setup, you can now run your Terraform operations directly from Terraform Cloud. It will use the variables you've set and the AWS credentials you've provided.
+1. Application Secrets:
+   - Flask secret key
+   - Additional application secrets
+   - Admin user configurations
 
-Using Terraform Cloud provides several benefits:
-- Secure storage of sensitive variables and state files
-- Collaboration features for team environments
-- Consistent execution environment
-- Integration with version control systems
-- Automated runs based on repository changes
+2. Database Secrets:
+   - Database name
+   - PostgreSQL username
+   - PostgreSQL password
+   - PostgreSQL port
 
-You can learn more about Terraform Cloud [here](https://www.terraform.io/cloud).
+3. Mail Server Secrets:
+   - Mail server password
+   - Default sender email
+   - Mail server hostname
+   - Mail server port
+   - TLS configuration
+
+All secrets are stored in AWS Secrets Manager with unique names that include your site name and a random suffix for additional security. You can optionally enable KMS encryption for these secrets by uncommenting the KMS configuration in the code.
 
 ## Deployment Steps from local
 

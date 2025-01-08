@@ -1,7 +1,7 @@
 # ALB Configuration
-resource "aws_lb" "openaiflask" {
-  depends_on = [ aws_acm_certificate.openaiflask, aws_security_group.alb ]
-  name               = "openaiflask-alb-${random_string.rando.result}"
+resource "aws_lb" "bedrockflask" {
+  depends_on = [ aws_acm_certificate.bedrockflask, aws_security_group.alb ]
+  name               = "bedrockflask-alb-${random_string.rando.result}"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
@@ -10,13 +10,13 @@ resource "aws_lb" "openaiflask" {
   enable_deletion_protection = false
 
   tags = {
-    Name = "openaiflask-alb"
+    Name = "bedrockflask-alb"
   }
 }
 
 
-resource "aws_lb_target_group" "openaiflask" {
-  name     = "openaiflask-tg-${random_string.rando.result}"
+resource "aws_lb_target_group" "bedrockflask" {
+  name     = "bedrockflask-tg-${random_string.rando.result}"
   port     = 8000
   protocol = "HTTP"
   vpc_id   = aws_vpc.vpc.id
@@ -38,37 +38,37 @@ resource "aws_lb_target_group" "openaiflask" {
   }
 
   tags = {
-    Name = "openaiflask-tg"
+    Name = "bedrockflask-tg"
   }
 }
 
 
-resource "aws_lb_target_group_attachment" "openaiflask" {
+resource "aws_lb_target_group_attachment" "bedrockflask" {
   for_each = {
-    for idx, instance in aws_instance.openaiflask : 
+    for idx, instance in aws_instance.bedrockflask : 
     idx => instance
   }
-  target_group_arn = aws_lb_target_group.openaiflask.arn
+  target_group_arn = aws_lb_target_group.bedrockflask.arn
   target_id        = each.value.id
   port             = 8000
 }
 
 
-resource "aws_lb_listener" "openaiflask" {
-  load_balancer_arn = aws_lb.openaiflask.arn
+resource "aws_lb_listener" "bedrockflask" {
+  load_balancer_arn = aws_lb.bedrockflask.arn
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = aws_acm_certificate.openaiflask.arn
+  certificate_arn   = aws_acm_certificate.bedrockflask.arn
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.openaiflask.arn
+    target_group_arn = aws_lb_target_group.bedrockflask.arn
   }
 }
 
 resource "aws_lb_listener" "redirect_http_to_https" {
-  load_balancer_arn = aws_lb.openaiflask.arn
+  load_balancer_arn = aws_lb.bedrockflask.arn
   port              = "80"
   protocol          = "HTTP"
 
@@ -86,7 +86,7 @@ resource "aws_lb_listener" "redirect_http_to_https" {
 // Security Group for ALB
 
 resource "aws_security_group" "alb" {
-  name        = "openaiflask-alb-sg-${random_string.rando.result}"
+  name        = "bedrockflask-alb-sg-${random_string.rando.result}"
   description = "Security group for ALB"
   vpc_id      = aws_vpc.vpc.id
 
@@ -112,6 +112,6 @@ resource "aws_security_group" "alb" {
   }
 
   tags = {
-    Name = "openaiflask-alb-sg-${random_string.rando.result}"
+    Name = "bedrockflask-alb-sg-${random_string.rando.result}"
   }
 }
