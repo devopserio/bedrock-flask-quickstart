@@ -31,3 +31,23 @@ variable "flask_secret_key" {
 variable "vpc_id" { 
   description = "The VPC ID"
 }
+
+variable "public_subnet_tag_key" {
+  description = "The key for the public subnet tag"
+  default     = "Tier"
+}
+
+variable "public_subnet_tag_value" {
+  description = "The value for the public subnet tag"
+  default     = "Public"
+}
+
+variable "private_subnet_tag_key" {
+  description = "The key for the private subnet tag"
+  default     = "Tier"
+}
+
+variable "private_subnet_tag_value" {
+  description = "The value for the private subnet tag"
+  default     = "Private"
+}

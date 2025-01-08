@@ -18,16 +18,6 @@ output "ec2_private_ips" {
   value       = aws_instance.openaiflask[*].private_ip
 }
 
-output "vpc_id" {
-  description = "The ID of the VPC"
-  value       = aws_vpc.vpc.id
-}
-
-output "public_subnet_ids" {
-  description = "The IDs of the public subnets"
-  value       = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
-}
-
 output "alb_security_group_id" {
   description = "The ID of the ALB security group"
   value       = aws_security_group.alb.id

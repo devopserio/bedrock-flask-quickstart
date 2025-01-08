@@ -21,7 +21,7 @@ data "aws_subnets" "public" {
   }
 }
 
-data "aws_subnets" "amazon_linux" {
+data "aws_subnets" "private" {
   filter {
     name   = "vpc-id"
     values = [data.aws_vpc.selected.id]
