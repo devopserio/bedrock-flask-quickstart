@@ -17,7 +17,7 @@ data "aws_subnets" "public" {
   }
 
   tags = {
-    var.public_subnet_tag_key = var.public_subnet_tag_value
+    "${var.public_subnet_tag_key}" = var.public_subnet_tag_value
   }
 }
 
@@ -28,7 +28,7 @@ data "aws_subnets" "private" {
   }
 
   tags = {
-    var.private_subnet_tag_key = var.private_subnet_tag_value
+    "${var.private_subnet_tag_key}" = var.private_subnet_tag_value
   }
 }
 

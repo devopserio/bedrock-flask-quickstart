@@ -5,7 +5,7 @@ resource "aws_lb" "bedrockflask" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
-  subnets            = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
+  subnets            = data.aws_subnets.public.ids
 
   enable_deletion_protection = false
 

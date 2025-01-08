@@ -7,8 +7,6 @@ resource "random_string" "secret_suffix" {
 locals {
   rendered_user_data = templatefile("${path.module}/user_data.sh.tpl", {
     region = var.aws_region
-    bedrock_secret_name = aws_secretsmanager_secret.bedrock_api_key.name
-    flask_secret_name = aws_secretsmanager_secret.flask_secret_key.name
   })
 }
 
