@@ -237,9 +237,9 @@ This will provide you with a rendered .env template for local development. To cr
 
 **Note**: The .env file contains secret names. You'll need to replace these with actual secret values from AWS Secrets Manager for local development.
 
-## Converting Terraform Output to .env File
+## Rendering your .env File with "/n" notation can be achieved in a few ways (pick one you like)
 
-When working with secrets and environment configurations, converting the Terraform output to a `.env` file can be tricky. We've provided multiple methods to make this process straightforward:
+We've provided multiple methods to make this process straightforward so you dont need to make this file manually:
 
 ### Option 1: Using an AI Assistant (Recommended)
 
@@ -255,31 +255,7 @@ When working with secrets and environment configurations, converting the Terrafo
 5. Copy the AI-generated .env file contents
 6. Save to a `.env` file in your project root
 
-### Option 2: Using Python Script
-
-For those comfortable with Python, use this script to convert the output:
-
-```python
-import sys
-
-# Read the input from clipboard or file
-escaped_string = input("Paste your terraform output here: ")
-
-# Remove outer quotes if present
-escaped_string = escaped_string.strip('"')
-
-# Convert escaped newlines to actual newlines
-formatted_string = escaped_string.replace('\\n', '\n')
-
-# Print the result
-print(formatted_string)
-
-# Optionally, save to .env file
-with open('.env', 'w') as f:
-    f.write(formatted_string)
-```
-
-### Option 3: Using Unix Command Line
+### Option 2: Using Unix Command Line 
 
 For Unix/Linux users, use `echo` with the `-e` flag:
 
