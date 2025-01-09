@@ -1,4 +1,4 @@
-# OpenAI Flask Application Quickstart - Dev Environment
+# Bedrock-Flask Dev Env Quickstart
 
 This quickstart spins up a simple dev server in a private subnet (in a preexisting VPC and subnet), and provides a pattern for integrating with OpenVPN Access Server for secure access.
 
@@ -61,7 +61,7 @@ To use this policy:
 1. Go to the AWS IAM console.
 2. Create a new policy by navigating to "Policies" and clicking "Create policy".
 3. In the JSON tab, paste the above policy.
-4. Review and create the policy, giving it a name like "OpenAIFlaskQuickstartPolicy".
+4. Review and create the policy, giving it a name like "BedrockFlaskQuickstartPolicy".
 5. Attach this policy to the IAM user or role you're using for this quickstart.
 
 **Note**: This is a broad policy for demonstration purposes. In a production environment, you should follow the principle of least privilege and grant only the specific permissions needed for your use case.
@@ -215,13 +215,95 @@ Subdomain and domain_name are variables - please note the domain should be hoste
 
 After a successful deployment, Terraform will display several outputs that provide important information about your infrastructure. You can also retrieve these outputs at any time by running `terraform output`. Here are the key outputs:
 
-- `ec2_instance_ids`: The ID of the EC2 instance (development instance)
-- `ec2_private_ips`: The private IP address of the EC2 instance.
-- `ec2_security_group_id`: The ID of the EC2 instances' security group.
-- `flask_secret_key_secret_name` - the name of the flask secret for use in your .env file
-- `openai_api_key_secret_name` - the name of your openai secret for use in your .env file
+- `application_url`: The URL of your Bedrock Flask application
+- `alb_dns_name`: The DNS name of the Application Load Balancer
+- `ec2_instance_ids`: The IDs of the EC2 instances
+- `ec2_private_ips`: The private IP addresses of the EC2 instances
+- `alb_security_group_id`: The ID of the ALB security group
+- `ec2_security_group_id`: The ID of the EC2 instances' security group
+- `acm_certificate_arn`: The ARN of the ACM certificate
+- `route53_zone_id`: The Zone ID of the Route 53 hosted zone
+- `rendered_env_template`: A rendered .env template for local development (sensitive value)
 
-These outputs can be useful for troubleshooting, further configuration, or integration with other systems.
+To get the rendered .env template for local development, you can run:
+```bash
+terraform output rendered_env_template
+```
+
+This will provide you with a rendered .env template for local development. To create the .env file:
+
+1. Run `terraform output -raw rendered_env_template > .env`
+2. The command will create a .env file in your current directory that you can use for local development.
+
+**Note**: The .env file contains secret names. You'll need to replace these with actual secret values from AWS Secrets Manager for local development.
+
+## Rendering your .env File with "/n" notation can be achieved in a few ways (pick one you like)
+
+We've provided multiple methods to make this process straightforward so you dont need to make this file manually:
+
+### Option 1: Using an AI Assistant (Recommended)
+
+1. Run `terraform output -raw rendered_env_template`
+2. Copy the entire output (including any quotation marks)
+3. Visit your preferred AI assistant (Claude, ChatGPT, etc.)
+4. Use the following prompt:
+   ```
+   Please convert this escaped string into a proper .env file format, removing all \n and replacing them with actual newlines:
+
+   [paste your terraform output here]
+   ```
+5. Copy the AI-generated .env file contents
+6. Save to a `.env` file in your project root
+
+### Option 2: Using Unix Command Line 
+
+For Unix/Linux users, use `echo` with the `-e` flag:
+
+```bash
+terraform output -raw rendered_env_template | sed 's/\\n/\n/g' > .env
+```
+
+### Verification
+
+After creating your `.env` file, verify its contents:
+
+```bash
+cat .env
+```
+
+You should see properly formatted environment variables, each on its own line:
+
+```
+FLASK_APP=run
+FLASK_ENV=development
+
+FLASK_SECRET_NAME=${flask_secret_name}
+REDIS_URL=redis://localhost:6379/0
+REGION=us-east-1
+
+DB_NAME_SECRET_NAME=${db_name_secret_name}
+DB_USER_SECRET_NAME=${db_user_secret_name}
+DB_PASSWORD_SECRET_NAME=${db_password_secret_name}
+DB_HOST_SECRET_NAME=${db_host_secret_name}
+DB_PORT_SECRET_NAME=${db_port_secret_name}
+
+MAIL_SERVER=${mail_server}
+MAIL_PORT=${mail_port}
+MAIL_USE_TLS=${mail_use_tls}
+MAIL_USERNAME=${email}
+MAIL_DEFAULT_SENDER=${email}
+MAIL_PASSWORD_SECRET_NAME=${mail_password_secret_name}
+
+ADDITIONAL_SECRETS=${additional_secrets}
+ADMIN_USERS_SECRET_NAME=${admin_users_secret_name}
+```
+
+### Troubleshooting
+
+- Ensure you're using the correct method for your operating system
+- If you see literal `\n` characters, double-check your conversion method
+
+**Pro Tip**: Never commit your `.env` file to version control. Add it to your `.gitignore` to protect sensitive information.
 
 ## Cleaning Up
 
@@ -241,11 +323,9 @@ Confirm the destruction by typing `yes` when prompted.
 
 3. **Dependencies**: Make sure all dependencies (Terraform, AWS CLI) are correctly installed and configured before starting.
 
-4. **Future Cost Optimization**: DevOpser is currently developing the DevOpser Platform for AI Webhosting, which aims to productionalize your application at a fraction of the cost with a single click. This platform is on track for release in Q4 2024. Stay tuned for updates!
-
 ## Support
 
-For any questions or assistance with this quickstart, please contact DevOpser at info@devopser.io. We're here to help you implement more advanced configurations, address any issues you may encounter, or discuss how we can help optimize your deployment for enhanced security and cost-effectiveness. It is also open source so feel free to submit a pull request with any changes and we will review them.
+For any questions or assistance with this quickstart, please contact DevOpser at [info@devopser.io](mailto:info@devopser.io) or [join our Slack community](https://join.slack.com/t/devopser-workspace/signup). We're here to help you implement more advanced configurations, address any issues you may encounter, or discuss how we can help optimize your deployment for enhanced security and cost-effectiveness. It is also open source so feel free to submit a pull request with any changes and we will review them.
 
 ## Disclaimer
 
