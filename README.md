@@ -98,7 +98,7 @@ Before you can use this quickstart, you need to subscribe to the DevOpser Flask 
 
 5. On the configuration page:
    - Select the AWS region closest to your users to reduce latency (e.g., North Virginia).
-   - copy the AMI-id and use this in the configuration for the `openaiflask_ami_id` variable in your `terraform.tfvars` file or upload as a variable in Terraform Cloud.
+   - copy the AMI-id and use this in the configuration for the `bedrockflask_ami_id` variable in your `terraform.tfvars` file or upload as a variable in Terraform Cloud.
 
 6. Your subscription is now active, and you can use the AMI ID in your Terraform configuration.
 
@@ -112,25 +112,48 @@ Before you can use this quickstart, you need to subscribe to the DevOpser Flask 
 Create a `terraform.tfvars` file in the project directory to set the required variables. Here's a template with explanations:
 
 ```hcl
-aws_region         = "us-east-1"  # The AWS region to deploy resources
-openaiflask_ami_id = "ami-xxxxxxxxxxxxxxxxx"  # AMI ID from the subscription process
-key_name           = "your-key-pair-name"  # Your EC2 key pair name
-your_ip_address    = "x.x.x.x"  # Your IP address for SSH access
-openai_api_key     = "your-openai-api-key"  # Your OpenAI API key
+aws_region         = "us-east-1"              # The AWS region to deploy resources
+bedrockflask_ami_id = "ami-xxxxxxxxxxxxxxxxx" # AMI ID from the subscription process
+key_name           = "your-key-pair-name"     # Your EC2 key pair name
+your_ip_address    = "x.x.x.x"               # Your IP address for SSH access
 flask_secret_key   = "your-flask-secret-key"  # A secret key for Flask
-vpc_id            = "vpc-xxxxxxxxxxxxxxxxxx" # VPC ID for a preexisting VPC
-access_server_sg_name = "name_of_your_openvpn_access_server_security_group" # to enable SSH access via a private IP address. Requires an OpenVPN Access server to be deployed into the same VPC.
+vpc_id             = "vpc-xxxxxxxxxxxxxxxxx"  # VPC ID for a preexisting VPC
+domain_name        = "example.com"           # The domain name for the application in Route53
+subdomain          = "app"                   # The subdomain for the application
+dev_db_name        = "myappdb"              # Name of the production database
+POSTGRES_USER      = "dbuser"               # Username for the PostgreSQL database
+POSTGRES_PASSWORD  = "dbpassword"           # Password for the PostgreSQL database
+POSTGRES_PORT      = "5432"                 # Port number for the PostgreSQL database
+mail_password      = "mailpassword"         # Password for the mail server
+email_for_mail_server = "noreply@example.com" # Default sender email address
+additional_secrets = "{}"                   # Additional secrets in JSON format
+admin_users        = "{}"                   # List of admin users in JSON format
 ```
 
 ### Variable Values
 
 - `aws_region`: Choose the AWS region where you want to deploy the resources. This should match the region you selected during the AMI subscription process.
-- `openaiflask_ami_id`: Use the AMI ID you noted down during the subscription process.
+- `bedrockflask_ami_id`: Use the AMI ID you noted down during the subscription process.
 - `key_name`: Create an EC2 key pair in your AWS account and provide its name.
-- `openai_api_key`: Your OpenAI API key.
+- `your_ip_address`: Your IP address for SSH access in x.x.x.x format.
 - `flask_secret_key`: A secret key for Flask. Generate a strong, random string for this.
-- `vpc_id` : VPC ID for a preexisting VPC
-- `access_server_sg_name` : to enable SSH access via a private IP address. Requires an OpenVPN Access server to be deployed into the same VPC.
+- `vpc_id`: VPC ID for a preexisting VPC.
+- `domain_name`: The domain name for your application (must be in Route53).
+- `subdomain`: The subdomain for your application.
+- `dev_db_name`: Name of your PostgreSQL database.
+- `POSTGRES_USER`: Username for the PostgreSQL database.
+- `POSTGRES_PASSWORD`: Password for the PostgreSQL database.
+- `POSTGRES_PORT`: Port number for the PostgreSQL database (default: 5432).
+- `mail_password`: Password for the mail server.
+- `email_for_mail_server`: Default sender email address for the mail server.
+- `additional_secrets`: Additional secrets for the application in JSON format (default: "{}").
+- `admin_users`: List of admin users for the application in JSON format (default: "{}").
+
+You can also customize the subnet tag settings if needed (defaults shown below):
+- `public_subnet_tag_key`: "Tier" (default)
+- `public_subnet_tag_value`: "Public" (default)
+- `private_subnet_tag_key`: "OS" (default)
+- `private_subnet_tag_value`: "Ubuntu" (default)
 
 **Note on Variable Handling and Terraform Cloud**: While using a `terraform.tfvars` file is convenient for local development, it's not the most secure method for handling sensitive variables in a production environment. For enhanced security and better secret management, we strongly recommend using Terraform Cloud. Here's how to set it up:
 
@@ -140,7 +163,7 @@ access_server_sg_name = "name_of_your_openvpn_access_server_security_group" # to
 
 3. In Terraform Cloud, create a new workspace and choose "Version control workflow" to connect it to your forked GitHub repository.
 
-4. In your workspace settings, navigate to the "Variables" section. Here, you can add all the variables from the `terraform.tfvars` file as Terraform variables. For sensitive variables like `openai_api_key` and `flask_secret_key`, make sure to mark them as sensitive.
+4. In your workspace settings, navigate to the "Variables" section. Here, you can add all the variables from the `terraform.tfvars` file as Terraform variables. For sensitive variables like `POSTGRES_PASSWORD` and `flask_secret_key`, make sure to mark them as sensitive.
 
 5. To authenticate with AWS, you can use [dynamic provider credentials](https://developer.hashicorp.com/terraform/cloud-docs/workspaces/dynamic-provider-credentials/aws-configuration). 
 
