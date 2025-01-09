@@ -323,11 +323,9 @@ Confirm the destruction by typing `yes` when prompted.
 
 3. **Dependencies**: Make sure all dependencies (Terraform, AWS CLI) are correctly installed and configured before starting.
 
-4. **Future Cost Optimization**: DevOpser is currently developing the DevOpser Platform for AI Webhosting, which aims to productionalize your application at a fraction of the cost with a single click. This platform is on track for release in Q4 2024. Stay tuned for updates!
-
 ## Support
 
-For any questions or assistance with this quickstart, please contact DevOpser at info@devopser.io. We're here to help you implement more advanced configurations, address any issues you may encounter, or discuss how we can help optimize your deployment for enhanced security and cost-effectiveness. It is also open source so feel free to submit a pull request with any changes and we will review them.
+For any questions or assistance with this quickstart, please contact DevOpser at [info@devopser.io](mailto:info@devopser.io) or [join our Slack community](https://join.slack.com/t/devopser-workspace/signup). We're here to help you implement more advanced configurations, address any issues you may encounter, or discuss how we can help optimize your deployment for enhanced security and cost-effectiveness. It is also open source so feel free to submit a pull request with any changes and we will review them.
 
 ## Disclaimer
 
