@@ -1,4 +1,4 @@
-# OpenAI Flask Application Quickstart - Dev Environment
+# Bedrock-Flask Dev Env Quickstart
 
 This quickstart spins up a simple dev server in a private subnet (in a preexisting VPC and subnet), and provides a pattern for integrating with OpenVPN Access Server for secure access.
 
@@ -61,7 +61,7 @@ To use this policy:
 1. Go to the AWS IAM console.
 2. Create a new policy by navigating to "Policies" and clicking "Create policy".
 3. In the JSON tab, paste the above policy.
-4. Review and create the policy, giving it a name like "OpenAIFlaskQuickstartPolicy".
+4. Review and create the policy, giving it a name like "BedrockFlaskQuickstartPolicy".
 5. Attach this policy to the IAM user or role you're using for this quickstart.
 
 **Note**: This is a broad policy for demonstration purposes. In a production environment, you should follow the principle of least privilege and grant only the specific permissions needed for your use case.
@@ -215,13 +215,24 @@ Subdomain and domain_name are variables - please note the domain should be hoste
 
 After a successful deployment, Terraform will display several outputs that provide important information about your infrastructure. You can also retrieve these outputs at any time by running `terraform output`. Here are the key outputs:
 
-- `ec2_instance_ids`: The ID of the EC2 instance (development instance)
-- `ec2_private_ips`: The private IP address of the EC2 instance.
-- `ec2_security_group_id`: The ID of the EC2 instances' security group.
-- `flask_secret_key_secret_name` - the name of the flask secret for use in your .env file
-- `openai_api_key_secret_name` - the name of your openai secret for use in your .env file
+- `application_url`: The URL of your Bedrock Flask application
+- `alb_dns_name`: The DNS name of the Application Load Balancer
+- `ec2_instance_ids`: The IDs of the EC2 instances
+- `ec2_private_ips`: The private IP addresses of the EC2 instances
+- `alb_security_group_id`: The ID of the ALB security group
+- `ec2_security_group_id`: The ID of the EC2 instances' security group
+- `acm_certificate_arn`: The ARN of the ACM certificate
+- `route53_zone_id`: The Zone ID of the Route 53 hosted zone
+- `rendered_env_template`: A rendered .env template for local development (sensitive value)
 
-These outputs can be useful for troubleshooting, further configuration, or integration with other systems.
+To get the rendered .env template for local development, you can run:
+```bash
+terraform output rendered_env_template
+```
+
+This will provide you with a properly configured .env file template containing all the necessary AWS Secrets Manager secret names. You can use this template for local development by:
+1. Copying the output to a new .env file in the root of your application directory during development.
+
 
 ## Cleaning Up
 

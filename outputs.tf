@@ -37,3 +37,9 @@ output "route53_zone_id" {
   description = "The Zone ID of the Route 53 hosted zone"
   value       = data.aws_route53_zone.domain.zone_id
 }
+
+output "rendered_env_template" {
+  description = "The rendered .env template for local development"
+  value       = data.template_file.env_config_flaskai.rendered
+  sensitive   = true
+}
