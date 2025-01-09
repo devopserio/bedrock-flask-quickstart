@@ -61,6 +61,39 @@ resource "aws_iam_policy" "bedrockflaskquickstart_secrets_policy" {
   })
 }
 
+resource "aws_iam_policy" "bedrock_policy" {
+  name        = "bedrock-access-policy-${random_string.rando.result}"
+  description = "Policy to access AWS Bedrock services"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "bedrock:InvokeModel",
+          "bedrock:ListFoundationModels"
+        ],
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "bedrockflask-policy" {
+  role = aws_iam_role.bedrockflask.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_role_policy_attachment" "bedrockflask-secrets-policy" {
+  role = aws_iam_role.bedrockflask.name
+  policy_arn = aws_iam_policy.bedrockflaskquickstart_secrets_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "bedrock-policy" {
+  role = aws_iam_role.bedrockflask.name
+  policy_arn = aws_iam_policy.bedrock_policy.arn
+}
 
 # uncomment if using KMS key
 #resource "aws_iam_policy" "kms_access_policy" {
@@ -82,16 +115,6 @@ resource "aws_iam_policy" "bedrockflaskquickstart_secrets_policy" {
  #   ]
 #  })
 #}
-
-resource "aws_iam_role_policy_attachment" "bedrockflask-policy" {
-  role = aws_iam_role.bedrockflask.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-}
-
-resource "aws_iam_role_policy_attachment" "bedrockflask-secrets-policy" {
-  role = aws_iam_role.bedrockflask.name
-  policy_arn = aws_iam_policy.bedrockflaskquickstart_secrets_policy.arn
-}
 
 # uncomment if using KMS key
 #resource "aws_iam_role_policy_attachment" "bedrockflask-kms-policy" {
