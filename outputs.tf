@@ -40,19 +40,5 @@ output "route53_zone_id" {
 
 output "rendered_env_template" {
   description = "The rendered .env template for local development"
-  value       = templatefile("${path.module}/env_template.tpl", {
-    flask_secret_name       = data.template_file.env_config_flaskai.vars.flask_secret_name,
-    db_name_secret_name     = data.template_file.env_config_flaskai.vars.db_name_secret_name,
-    db_user_secret_name     = data.template_file.env_config_flaskai.vars.db_user_secret_name,
-    db_password_secret_name = data.template_file.env_config_flaskai.vars.db_password_secret_name,
-    db_host_secret_name     = data.template_file.env_config_flaskai.vars.db_host_secret_name,
-    db_port_secret_name     = data.template_file.env_config_flaskai.vars.db_port_secret_name,
-    email                   = data.template_file.env_config_flaskai.vars.email,
-    mail_server             = data.template_file.env_config_flaskai.vars.mail_server,
-    mail_port               = data.template_file.env_config_flaskai.vars.mail_port,
-    mail_use_tls            = data.template_file.env_config_flaskai.vars.mail_use_tls,
-    mail_password_secret_name = data.template_file.env_config_flaskai.vars.mail_password_secret_name,
-    additional_secrets      = data.template_file.env_config_flaskai.vars.additional_secrets,
-    admin_users_secret_name = data.template_file.env_config_flaskai.vars.admin_users_secret_name
-  })
+  value       = data.template_file.env_config_flaskai.rendered
 }

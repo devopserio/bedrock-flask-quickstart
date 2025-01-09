@@ -237,6 +237,98 @@ This will provide you with a rendered .env template for local development. To cr
 
 **Note**: The .env file contains secret names. You'll need to replace these with actual secret values from AWS Secrets Manager for local development.
 
+## Converting Terraform Output to .env File
+
+When working with secrets and environment configurations, converting the Terraform output to a `.env` file can be tricky. We've provided multiple methods to make this process straightforward:
+
+### Option 1: Using an AI Assistant (Recommended)
+
+1. Run `terraform output -raw rendered_env_template`
+2. Copy the entire output (including any quotation marks)
+3. Visit your preferred AI assistant (Claude, ChatGPT, etc.)
+4. Use the following prompt:
+   ```
+   Please convert this escaped string into a proper .env file format, removing all \n and replacing them with actual newlines:
+
+   [paste your terraform output here]
+   ```
+5. Copy the AI-generated .env file contents
+6. Save to a `.env` file in your project root
+
+### Option 2: Using Python Script
+
+For those comfortable with Python, use this script to convert the output:
+
+```python
+import sys
+
+# Read the input from clipboard or file
+escaped_string = input("Paste your terraform output here: ")
+
+# Remove outer quotes if present
+escaped_string = escaped_string.strip('"')
+
+# Convert escaped newlines to actual newlines
+formatted_string = escaped_string.replace('\\n', '\n')
+
+# Print the result
+print(formatted_string)
+
+# Optionally, save to .env file
+with open('.env', 'w') as f:
+    f.write(formatted_string)
+```
+
+### Option 3: Using Unix Command Line
+
+For Unix/Linux users, use `echo` with the `-e` flag:
+
+```bash
+terraform output -raw rendered_env_template | sed 's/\\n/\n/g' > .env
+```
+
+### Verification
+
+After creating your `.env` file, verify its contents:
+
+```bash
+cat .env
+```
+
+You should see properly formatted environment variables, each on its own line:
+
+```
+FLASK_APP=run
+FLASK_ENV=development
+
+FLASK_SECRET_NAME=${flask_secret_name}
+REDIS_URL=redis://localhost:6379/0
+REGION=us-east-1
+
+DB_NAME_SECRET_NAME=${db_name_secret_name}
+DB_USER_SECRET_NAME=${db_user_secret_name}
+DB_PASSWORD_SECRET_NAME=${db_password_secret_name}
+DB_HOST_SECRET_NAME=${db_host_secret_name}
+DB_PORT_SECRET_NAME=${db_port_secret_name}
+
+MAIL_SERVER=${mail_server}
+MAIL_PORT=${mail_port}
+MAIL_USE_TLS=${mail_use_tls}
+MAIL_USERNAME=${email}
+MAIL_DEFAULT_SENDER=${email}
+MAIL_PASSWORD_SECRET_NAME=${mail_password_secret_name}
+
+ADDITIONAL_SECRETS=${additional_secrets}
+ADMIN_USERS_SECRET_NAME=${admin_users_secret_name}
+```
+
+### Troubleshooting
+
+- Ensure you're using the correct method for your operating system
+- If you see literal `\n` characters, double-check your conversion method
+
+**Pro Tip**: Never commit your `.env` file to version control. Add it to your `.gitignore` to protect sensitive information.
+
 ## Cleaning Up
 
 To avoid incurring unnecessary costs, remember to destroy the resources when you're done:
