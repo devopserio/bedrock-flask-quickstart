@@ -123,3 +123,8 @@ variable "mail_use_tls" {
   default     = "true"
   sensitive   = true
 }
+
+variable "vpn_sg_id" {
+  description = "Security group ID for the VPN"
+  type        = string
+}

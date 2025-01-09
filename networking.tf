@@ -40,6 +40,16 @@ resource "aws_security_group_rule" "bedrockflask_ssh" {
   description       = "SSH access from specific IP"
 }
 
+resource "aws_security_group_rule" "bedrockflask_vpn" {
+  type                     = "ingress"
+  from_port                = 22
+  to_port                  = 22
+  protocol                 = "tcp"
+  source_security_group_id = var.vpn_sg_id
+  security_group_id        = aws_security_group.bedrockflask.id
+  description              = "SSH access from VPN"
+}
+
 resource "aws_security_group_rule" "bedrockflask_app" {
   type                     = "ingress"
   from_port                = 8000
