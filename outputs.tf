@@ -38,34 +38,21 @@ output "route53_zone_id" {
   value       = data.aws_route53_zone.domain.zone_id
 }
 
-locals {
-  env_template_lines = [
-    "FLASK_APP=run",
-    "FLASK_ENV=development",
-    "",
-    "FLASK_SECRET_NAME=${data.template_file.env_config_flaskai.vars.flask_secret_name}",
-    "REDIS_URL=redis://localhost:6379/0",
-    "REGION=us-east-1",
-    "",
-    "DB_NAME_SECRET_NAME=${data.template_file.env_config_flaskai.vars.db_name_secret_name}",
-    "DB_USER_SECRET_NAME=${data.template_file.env_config_flaskai.vars.db_user_secret_name}",
-    "DB_PASSWORD_SECRET_NAME=${data.template_file.env_config_flaskai.vars.db_password_secret_name}",
-    "DB_HOST_SECRET_NAME=${data.template_file.env_config_flaskai.vars.db_host_secret_name}",
-    "DB_PORT_SECRET_NAME=${data.template_file.env_config_flaskai.vars.db_port_secret_name}",
-    "",
-    "MAIL_SERVER=${data.template_file.env_config_flaskai.vars.mail_server}",
-    "MAIL_PORT=${data.template_file.env_config_flaskai.vars.mail_port}",
-    "MAIL_USE_TLS=${data.template_file.env_config_flaskai.vars.mail_use_tls}",
-    "MAIL_USERNAME=${data.template_file.env_config_flaskai.vars.email}",
-    "MAIL_DEFAULT_SENDER=${data.template_file.env_config_flaskai.vars.email}",
-    "MAIL_PASSWORD_SECRET_NAME=${data.template_file.env_config_flaskai.vars.mail_password_secret_name}",
-    "",
-    "ADDITIONAL_SECRETS=${data.template_file.env_config_flaskai.vars.additional_secrets}",
-    "ADMIN_USERS_SECRET_NAME=${data.template_file.env_config_flaskai.vars.admin_users_secret_name}"
-  ]
-}
-
 output "rendered_env_template" {
   description = "The rendered .env template for local development"
-  value       = join("\n", local.env_template_lines)
+  value       = templatefile("${path.module}/env_template.tpl", {
+    flask_secret_name       = data.template_file.env_config_flaskai.vars.flask_secret_name,
+    db_name_secret_name     = data.template_file.env_config_flaskai.vars.db_name_secret_name,
+    db_user_secret_name     = data.template_file.env_config_flaskai.vars.db_user_secret_name,
+    db_password_secret_name = data.template_file.env_config_flaskai.vars.db_password_secret_name,
+    db_host_secret_name     = data.template_file.env_config_flaskai.vars.db_host_secret_name,
+    db_port_secret_name     = data.template_file.env_config_flaskai.vars.db_port_secret_name,
+    email                   = data.template_file.env_config_flaskai.vars.email,
+    mail_server             = data.template_file.env_config_flaskai.vars.mail_server,
+    mail_port               = data.template_file.env_config_flaskai.vars.mail_port,
+    mail_use_tls            = data.template_file.env_config_flaskai.vars.mail_use_tls,
+    mail_password_secret_name = data.template_file.env_config_flaskai.vars.mail_password_secret_name,
+    additional_secrets      = data.template_file.env_config_flaskai.vars.additional_secrets,
+    admin_users_secret_name = data.template_file.env_config_flaskai.vars.admin_users_secret_name
+  })
 }
