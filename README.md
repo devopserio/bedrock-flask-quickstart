@@ -230,9 +230,12 @@ To get the rendered .env template for local development, you can run:
 terraform output rendered_env_template
 ```
 
-This will provide you with a properly configured .env file template containing all the necessary AWS Secrets Manager secret names. You can use this template for local development by:
-1. Copying the output to a new .env file in the root of your application directory during development.
+This will provide you with a rendered .env template for local development. To create the .env file:
 
+1. Run `terraform output -raw rendered_env_template > .env`
+2. The command will create a .env file in your current directory that you can use for local development.
+
+**Note**: The .env file contains secret names. You'll need to replace these with actual secret values from AWS Secrets Manager for local development.
 
 ## Cleaning Up
 
