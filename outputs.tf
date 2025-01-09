@@ -41,5 +41,4 @@ output "route53_zone_id" {
 output "rendered_env_template" {
   description = "The rendered .env template for local development"
   value       = data.template_file.env_config_flaskai.rendered
-  sensitive   = true
 }
