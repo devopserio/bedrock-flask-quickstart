@@ -17,3 +17,4 @@ data "template_file" "env_config_flaskai" {
     admin_users_secret_name = aws_secretsmanager_secret.admin_users.name
   }
 }
+

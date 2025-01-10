@@ -1,0 +1,16 @@
+aws_region         = "us-east-1"              # The AWS region to deploy resources
+bedrockflask_ami_id = "ami-xxxxxxxxxxxxxxxxx" # AMI ID from the subscription process
+key_name           = "your-key-pair-name"     # Your EC2 key pair name
+your_ip_address    = "x.x.x.x"               # Your IP address for SSH access
+flask_secret_key   = "your-flask-secret-key"  # A secret key for Flask
+vpc_id             = "vpc-xxxxxxxxxxxxxxxxx"  # VPC ID for a preexisting VPC
+domain_name        = "example.com"           # The domain name for the application in Route53
+subdomain          = "app"                   # The subdomain for the application
+dev_db_name        = "myappdb"              # Name of the production database
+POSTGRES_USER      = "dbuser"               # Username for the PostgreSQL database
+POSTGRES_PASSWORD  = "dbpassword"           # Password for the PostgreSQL database
+POSTGRES_PORT      = "5432"                 # Port number for the PostgreSQL database
+mail_password      = "mailpassword"         # Password for the mail server
+email_for_mail_server = "noreply@example.com" # Default sender email address
+additional_secrets = "{}"                   # Additional secrets in JSON format
+admin_users        = "{}"                   # List of admin users in JSON format
